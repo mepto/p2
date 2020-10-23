@@ -17,47 +17,88 @@ class Categories:
     all_categories = []
 
     def __init__(self):
-        page = requests.get(SCRAPE_URL)
-        self.page_content = BeautifulSoup(page.content, 'html.parser')
-        categories_data = self.page_content.select('.side_categories li ul li a')
-        for data in categories_data:
-            href = urljoin(SCRAPE_URL, data.get('href'))
-            category = data.get_text(strip=True)
+        page = Page(SCRAPE_URL).scrape()
+        categories_data = page.select('.side_categories li ul li a')
+        for item in categories_data:
+            href = urljoin(SCRAPE_URL, item.get('href'))
+            category = item.get_text(strip=True)
             self.all_categories.append({'href': href, 'category': category})
 
-    def get(self):
+    def data(self):
         return self.all_categories
+
+
+class Category:
+    """
+    Create a list of all books listed in a category
+    """
+    total_pages = 1
+
+    def __init__(self, url):
+        self.category_products = []
+        page = Page(url).scrape()
+        if page:
+            ...
+
+    def data(self):
+        return self.category_products
+
+
+class Page:
+    """
+    Create new instance for parsed page data
+    """
+
+    def __init__(self, url):
+        page = requests.get(url)
+        self.page_content = BeautifulSoup(page.content, 'html.parser')
+
+    def scrape(self):
+        return self.page_content
 
 
 class Product:
     """
     Retrieve data for one book from the page url
     """
-    page = ''
     page_content = ''
 
     def get_item(self, item, pos=0, attr_type='class', attr=''):
-        find_item = self.page_content.find_all(item, {attr_type: attr})
+        find_item = self.page.find_all(item, {attr_type: attr})
         return find_item[pos].text
 
-    def __init__(self, page):
-        page = requests.get(page)
-        self.page_content = BeautifulSoup(page.content, 'html.parser')
-        product = self.page_content.prettify()
-        title = self.get_item('h1')
-        description = self.get_item('p')
-        upc = self.get_item('td')
-        price_no_tax = self.get_item('td', pos=2)
-        price_tax = self.get_item('td', pos=3)
-        nb_reviews = self.get_item('td', pos=6)
-        rating = self.page_content.select('.product_main .star-rating')[0][
-            'class'][1]
-        image = urljoin(SCRAPE_URL, self.page_content.find('div', {
-            'id': 'product_gallery'}).find('img')['src'])
-        category = self.page_content.find('ul', {'class': 'breadcrumb'}) \
-            .find_all('li')[2].select('a')[0].text
-        nb_stock = ''
-        for char in self.page_content.find('p', {'class': 'availability'}).text:
-            if char.isdigit():
-                nb_stock += char
-        nb_stock = int(nb_stock)
+    def __init__(self, url=''):
+        self.url = url
+        if self.url:
+            self.page = Page(self.url).scrape()
+            product = self.page.prettify()
+            self.title = self.get_item('h1')
+            self.description = self.get_item('p')
+            self.upc = self.get_item('td')
+            self.price_no_tax = self.get_item('td', pos=2)
+            self.price_tax = self.get_item('td', pos=3)
+            self.nb_reviews = self.get_item('td', pos=6)
+            self.rating = self.page.select('.product_main .star-rating')[0][
+                'class'][1]
+            self.image = urljoin(SCRAPE_URL, self.page.find('div', {
+                'id': 'product_gallery'}).find('img')['src'])
+            self.category = self.page.find('ul', {'class': 'breadcrumb'}) \
+                .find_all('li')[2].select('a')[0].text
+            # Get stock
+            self.stock = ''
+            for char in self.page.find('p', {'class': 'availability'}).text:
+                if char.isdigit():
+                    self.stock += char
+            self.stock = int(self.stock)
+        else:
+            print('No page was given for analysis')
+
+    def data(self):
+        return {'product_page_url': self.url,
+                'universal_product_code': self.upc, 'title': self.title,
+                'price_including_tax': self.price_tax,
+                'price_excluding_tax': self.price_no_tax,
+                'quantity_available': self.stock,
+                'product_description': self.description,
+                'category': self.category, 'review_rating': self.rating,
+                'image_url': self.image}
