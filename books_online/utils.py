@@ -2,6 +2,8 @@
 # coding: utf-8
 import os
 
+import requests
+
 
 def get_user_choice(message):
     """
@@ -31,3 +33,21 @@ def get_folder(folder_path):
         os.mkdir(folder_path)
 
     return folder_path
+
+
+def check_images(user_choice):
+    if int(user_choice) == 1:
+        return True
+    elif int(user_choice) == 0:
+        return False
+    else:
+        raise Exception('Invalid choice. Only "Yes (1)" or "No (0)" are '
+                        'valid options.')
+
+
+def get_image(book):
+    download_folder = get_folder('media')
+    filepath, extension = os.path.splitext(book.image)
+    image = requests.get(book.image, allow_redirects=True)
+    with open(f"{download_folder}/{book.upc}{extension}", 'wb') as file:
+        file.write(image.content)
