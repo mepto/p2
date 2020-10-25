@@ -36,6 +36,10 @@ def get_folder(folder_path):
 
 
 def check_images(user_choice):
+    """
+    Check if user choice for download exists
+    :return: boolean or raise exception
+    """
     if int(user_choice) == 1:
         return True
     elif int(user_choice) == 0:
@@ -46,6 +50,9 @@ def check_images(user_choice):
 
 
 def get_image(book):
+    """
+    Download image file in assets/media folder
+    """
     download_folder = get_folder('media')
     filepath, extension = os.path.splitext(book.image)
     image = requests.get(book.image, allow_redirects=True)

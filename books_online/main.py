@@ -9,7 +9,8 @@ from .utils import get_user_choice, get_folder, check_images, get_image
 
 def main():
     """
-    Create instances of classes
+    Loop over categories to write books data in csv files, optionally
+    download book cover image
     """
     scrape_type = get_user_choice('Please choose the type of export: (1) by '
                                   'categories, or (2) all_books.')
