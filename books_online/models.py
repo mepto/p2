@@ -9,6 +9,19 @@ from bs4 import BeautifulSoup
 from .settings import SCRAPE_URL
 
 
+class Page:
+    """
+    Create new instance for parsed page data
+    """
+
+    def __init__(self, url):
+        page = requests.get(url)
+        self.page_content = BeautifulSoup(page.content, 'html.parser')
+
+    def scrape(self):
+        return self.page_content
+
+
 class Categories:
     """
     Create a list of all categories and their href
@@ -44,34 +57,23 @@ class Category:
         return self.category_products
 
 
-class Page:
-    """
-    Create new instance for parsed page data
-    """
-
-    def __init__(self, url):
-        page = requests.get(url)
-        self.page_content = BeautifulSoup(page.content, 'html.parser')
-
-    def scrape(self):
-        return self.page_content
-
-
-class Product:
+class Book:
     """
     Retrieve data for one book from the page url
     """
     page_content = ''
 
     def get_item(self, item, pos=0, attr_type='class', attr=''):
-        find_item = self.page.find_all(item, {attr_type: attr})
-        return find_item[pos].text
+        try:
+            find_item = self.page.find_all(item, {attr_type: attr})
+            return find_item[pos].text
+        except IndexError:
+            return 'N/A'
 
     def __init__(self, url=''):
         self.url = url
         if self.url:
             self.page = Page(self.url).scrape()
-            product = self.page.prettify()
             self.title = self.get_item('h1')
             self.description = self.get_item('p')
             self.upc = self.get_item('td')
@@ -91,7 +93,7 @@ class Product:
                     self.stock += char
             self.stock = int(self.stock)
         else:
-            print('No page was given for analysis')
+            raise Exception('No page was given for analysis')
 
     def data(self):
         return {'product_page_url': self.url,
