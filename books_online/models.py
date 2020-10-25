@@ -29,9 +29,16 @@ class Categories:
 
     all_categories = []
 
-    def __init__(self):
+    def __init__(self, option=1):
         page = Page(SCRAPE_URL).scrape()
-        categories_data = page.select('.side_categories li ul li a')
+        if int(option) == 1:  # 'categories':
+            categories_data = page.select('.side_categories li ul li a')
+        elif int(option) == 2:  # 'all_books':
+            categories_data = page.select('.side_categories > ul > li > a')
+        else:
+            raise Exception(
+                'Type unknown. Please select "categories" or "all_books".')
+
         for item in categories_data:
             href = urljoin(SCRAPE_URL, item.get('href'))
             category = item.get_text(strip=True)
