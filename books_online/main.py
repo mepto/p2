@@ -4,7 +4,7 @@ import csv
 
 from .models import Book, Categories, Category
 from .settings import FIELDNAMES
-from .utils import get_user_choice, get_folder, check_images, get_image
+from .utils import get_user_choice, get_folder, get_image
 
 
 def main():
@@ -13,10 +13,9 @@ def main():
     download book cover image
     """
     scrape_type = get_user_choice('Please choose the type of export: (1) by '
-                                  'categories, or (2) all_books.')
+                                  'categories, or (2) all_books.', [1, 2])
     images_download = get_user_choice('Would you like to download the books '
-                                      'images files? (1) Yes, (0) No')
-    download = check_images(images_download)
+                                      'images files? (1) Yes, (0) No', [0, 1])
     categories = Categories(scrape_type).data()
     for category in categories:
         exports_folder = get_folder('exports')
@@ -32,7 +31,7 @@ def main():
             for product in category_products:
                 book = Book(product)
                 csv_writer.writerow(book.data())
-                if download:
+                if images_download == 1:
                     get_image(book)
 
     print('Export process is done.')

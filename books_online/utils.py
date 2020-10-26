@@ -5,15 +5,16 @@ import os
 import requests
 
 
-def get_user_choice(message):
+def get_user_choice(message, choices):
     """
     Loops until user enters proper choice
     :return: user choice (digit)
     """
     user_choice = input(message)
-    while not user_choice.isdigit():
+    while not user_choice.isdigit() or int(user_choice) not in choices:
         user_choice = input(f'Incorrect entry "{user_choice}". {message}')
-    return user_choice
+
+    return int(user_choice)
 
 
 def get_folder(folder_path):
@@ -35,18 +36,18 @@ def get_folder(folder_path):
     return folder_path
 
 
-def check_images(user_choice):
-    """
-    Check if user choice for download exists
-    :return: boolean or raise exception
-    """
-    if int(user_choice) == 1:
-        return True
-    elif int(user_choice) == 0:
-        return False
-    else:
-        raise Exception('Invalid choice. Only "Yes (1)" or "No (0)" are '
-                        'valid options.')
+# def check_images(user_choice):
+#     """
+#     Check if user choice for download exists
+#     :return: boolean or raise exception
+#     """
+#     if int(user_choice) == 1:
+#         return True
+#     elif int(user_choice) == 0:
+#         return False
+#     else:
+#         raise Exception('Invalid choice. Only "Yes (1)" or "No (0)" are '
+#                         'valid options.')
 
 
 def get_image(book):

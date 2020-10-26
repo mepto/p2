@@ -29,11 +29,11 @@ class Categories:
 
     all_categories = []
 
-    def __init__(self, option=1):
+    def __init__(self, option):
         page = Page(SCRAPE_URL).scrape()
-        if int(option) == 1:  # 'categories':
+        if option == 1:  # 'categories':
             categories_data = page.select('.side_categories li ul li a')
-        elif int(option) == 2:  # 'all_books':
+        elif option == 2:  # 'all_books':
             categories_data = page.select('.side_categories > ul > li > a')
         else:
             raise Exception(
