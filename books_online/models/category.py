@@ -15,14 +15,18 @@ class Category:
 
     def __init__(self, url=''):
         self.category_products = []
-        products_per_page = 20
-
         page = Page(url).scrape()
+
+        # Find max items per page
+        main_page = Page(SCRAPE_URL).scrape()
+        products_per_page = int(
+            main_page.select('form.form-horizontal strong')[2].text)
 
         if page:
             self.get_page_products(url)
             total_results = int(
                 page.select('form.form-horizontal strong')[0].text)
+            # Determine if and scrape when there is more than 1 result page
             if total_results > products_per_page:
                 extra_pages = trunc(total_results / products_per_page)
                 base_url = url[:url.rfind('/')]
@@ -33,6 +37,9 @@ class Category:
             raise Exception(NO_URL_ERROR)
 
     def get_page_products(self, url):
+        """
+        Get list of books href on result page
+        """
         current_page = Page(url).scrape()
         links = current_page.select('section ol li article.product_pod h3 a')
         for link in links:
