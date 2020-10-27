@@ -5,7 +5,7 @@ import csv
 from .models.all_categories import AllCategories
 from .models.book import Book
 from .models.category import Category
-from .settings import FIELDNAMES
+from .settings import FIELDNAMES, PATIENCE_MESSAGE
 from .utils import get_user_choice, get_folder, get_image
 
 
@@ -18,6 +18,7 @@ def main():
                                   'categories, or (2) all_books.', [1, 2])
     images_download = get_user_choice('Would you like to download the books '
                                       'images files? (1) Yes, (0) No', [0, 1])
+    print(PATIENCE_MESSAGE)
     categories = AllCategories(scrape_type).data()
     for category in categories:
         exports_folder = get_folder('exports')

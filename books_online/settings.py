@@ -7,3 +7,4 @@ FIELDNAMES = ['product_page_url', 'universal_product_code', 'title',
               'quantity_available', 'product_description', 'category',
               'review_rating', 'image_url']
 NO_URL_ERROR = 'No page was given for analysis.'
+PATIENCE_MESSAGE = 'This may take a few minutes... Please wait.'
