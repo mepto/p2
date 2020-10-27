@@ -13,10 +13,11 @@ class Book:
     """
     page_content = ''
 
-    def get_item(self, item, pos=0, attr_type='class', attr=''):
+    def get_item(self, item, pos=0):
         try:
-            find_item = self.page.find_all(item, {attr_type: attr})
+            find_item = self.page.find_all(item)
             return find_item[pos].text
+        # return info if item does not exist on page
         except IndexError:
             return 'N/A'
 
