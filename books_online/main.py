@@ -28,9 +28,9 @@ def main():
             csv_writer = csv.DictWriter(csv_file, fieldnames=FIELDNAMES,
                                         delimiter='|')
             csv_writer.writeheader()
-            print(categories[category])
-            for book in categories[category]:
-                # print(book)
+            books = categories[category]
+            for book in books:
+                print(book)
                 csv_writer.writerow(book)
                 if images_download == 1:
                     get_image(book)
