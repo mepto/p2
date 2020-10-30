@@ -45,7 +45,7 @@ class AllCategories:
             book_list = Category(category['href']).data()
             all_books = []
             for item in book_list:
-                book = Book(item).data
+                book = Book(item).data()
                 all_books.append(book)
             full_list[category_name] = all_books
         return full_list
