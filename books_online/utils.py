@@ -55,7 +55,8 @@ def get_image(book):
     Download image file in assets/media folder
     """
     download_folder = get_folder('media')
-    filepath, extension = os.path.splitext(book.image)
-    image = requests.get(book.image, allow_redirects=True)
-    with open(f"{download_folder}/{book.upc}{extension}", 'wb') as file:
+    filepath, extension = os.path.splitext(book['image_url'])
+    image = requests.get(book['image_url'], allow_redirects=True)
+    with open(f"{download_folder}/{book['universal_product_code']}{extension}",
+              'wb') as file:
         file.write(image.content)

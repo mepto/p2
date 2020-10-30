@@ -19,21 +19,19 @@ def main():
     images_download = get_user_choice('Would you like to download the books '
                                       'images files? (1) Yes, (0) No', [0, 1])
     print(PATIENCE_MESSAGE)
-    categories = AllCategories(scrape_type).data()
+    categories = AllCategories(scrape_type).get_books_list()
     for category in categories:
         exports_folder = get_folder('exports')
-        category_name = category['category']
-        filename = f"{exports_folder}/{category_name}.csv"
-
-        with open(filename, 'w', encoding="utf-8-sig", newline='') as csvfile:
-            print(f"Creating file {category_name}.csv")
-            csv_writer = csv.DictWriter(csvfile, fieldnames=FIELDNAMES,
+        filename = f"{exports_folder}/{category}.csv"
+        with open(filename, 'w', encoding="utf-8-sig", newline='') as csv_file:
+            print(f"Creating file {category}.csv")
+            csv_writer = csv.DictWriter(csv_file, fieldnames=FIELDNAMES,
                                         delimiter='|')
             csv_writer.writeheader()
-            category_products = Category(category['href']).data()
-            for product in category_products:
-                book = Book(product)
-                csv_writer.writerow(book.data())
+            books = categories[category]
+            for book in books:
+                print(book)
+                csv_writer.writerow(book)
                 if images_download == 1:
                     get_image(book)
 
