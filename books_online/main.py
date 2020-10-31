@@ -23,6 +23,7 @@ def main():
     for category in categories:
         exports_folder = get_folder('exports')
         filename = f"{exports_folder}/{category}.csv"
+        # Write csv file(s)
         with open(filename, 'w', encoding="utf-8-sig", newline='') as csv_file:
             print(f"Creating file {category}.csv")
             csv_writer = csv.DictWriter(csv_file, fieldnames=FIELDNAMES,
@@ -30,8 +31,8 @@ def main():
             csv_writer.writeheader()
             books = categories[category]
             for book in books:
-                print(book)
                 csv_writer.writerow(book)
+                # Download images
                 if images_download == 1:
                     get_image(book)
 
