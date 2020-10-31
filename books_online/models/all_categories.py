@@ -1,11 +1,13 @@
 #! /usr/bin/python
 # coding: utf-8
+from multiprocessing import Pool
 from urllib.parse import urljoin
 
 from books_online.models.book import Book
 from books_online.models.category import Category
 from books_online.models.page import Page
 from books_online.settings import SCRAPE_URL, NO_URL_ERROR
+from books_online.utils import write_files
 
 
 class AllCategories:
@@ -33,19 +35,19 @@ class AllCategories:
         else:
             raise Exception(NO_URL_ERROR)
 
-    def data(self):
-        return self.all_categories
-
-    def get_books_list(self):
-        full_list = {}
+    def get_books(self, download_choice):
+        download = True if download_choice == 1 else False
         for category in self.all_categories:
             category_name = category['category']
-            # full_list.push(category_name)
             print(f'Fetching books in {category_name}...')
             book_list = Category(category['href']).data()
-            all_books = []
-            for item in book_list:
-                book = Book(item).data()
-                all_books.append(book)
-            full_list[category_name] = all_books
-        return full_list
+            p = Pool(10)
+            all_books = p.map(self.get_book_data, book_list)
+            p.terminate()
+            p.join()
+            write_files(category_name, all_books, download)
+
+    @staticmethod
+    def get_book_data(item):
+        book = Book(item).data()
+        return book
