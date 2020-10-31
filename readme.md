@@ -19,7 +19,7 @@ Retrieves books data from books.toscrape.com. Uses that data to populate csv
 ## How to use
 1. At project root, to launch the script type
 
-`python books_online.py`
+`python main.py`
 
 2. The system will prompt you to choose an export by category (type 1) or an
  export of all books (type 2)
