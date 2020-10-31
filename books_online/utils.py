@@ -1,8 +1,11 @@
 #! /usr/bin/python
 # coding: utf-8
+import csv
 import os
 
 import requests
+
+from books_online.settings import FIELDNAMES
 
 
 def get_user_choice(message, choices):
@@ -36,18 +39,19 @@ def get_folder(folder_path):
     return folder_path
 
 
-# def check_images(user_choice):
-#     """
-#     Check if user choice for download exists
-#     :return: boolean or raise exception
-#     """
-#     if int(user_choice) == 1:
-#         return True
-#     elif int(user_choice) == 0:
-#         return False
-#     else:
-#         raise Exception('Invalid choice. Only "Yes (1)" or "No (0)" are '
-#                         'valid options.')
+def write_files(title, book_list, download):
+    exports_folder = get_folder('exports')
+    filename = f"{exports_folder}/{title}.csv"
+    download_text = 'and downloading images' if download else ''
+    with open(filename, 'w', encoding="utf-8-sig", newline='') as csv_file:
+        print(f"Creating file {title}.csv {download_text}")
+        csv_writer = csv.DictWriter(csv_file, fieldnames=FIELDNAMES,
+                                    delimiter='|')
+        csv_writer.writeheader()
+        for book in book_list:
+            csv_writer.writerow(book)
+            if download:
+                get_image(book)
 
 
 def get_image(book):
