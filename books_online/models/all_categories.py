@@ -1,6 +1,6 @@
 #! /usr/bin/python
 # coding: utf-8
-from multiprocessing import Pool
+from multiprocessing import Pool, cpu_count
 from urllib.parse import urljoin
 
 from books_online.models.book import Book
@@ -41,7 +41,7 @@ class AllCategories:
             category_name = category['category']
             print(f'Fetching books in {category_name}...')
             book_list = Category(category['href']).data()
-            p = Pool(10)
+            p = Pool(cpu_count())
             all_books = p.map(self.get_book_data, book_list)
             p.terminate()
             p.join()
